@@ -12,7 +12,6 @@
     int lexer_error(int line_number, char *lexem);
     extern int line_number;
 %}
-
     /*DEFINICIONES: definicion de clases a expandir en los patrones*/
 /*Para la definicion del programa*/
 inicio          [iI][nN][iI][cC][iI][oO]
@@ -68,7 +67,6 @@ numero          (([+-][0-9]+\.[0-9]{2})|([0-9]+\.[0-9]{2})|([+-][0-9]+)|([0-9]+)
 string          (\"[a-za-Z0-9]+\")
     /*CONDICIONES DE ARRANQUE*/
 
-
     /*DIRECTIVAS*/    
 %option noyywrap
 
@@ -96,7 +94,7 @@ string          (\"[a-za-Z0-9]+\")
 				        yylval.string = strdup(yytext);
 				        return NOMVAR;
                     }
-{finvariables}      {        return FINVAR;        }	
+{finvariables}      {        return FINVAR;        }
 {tipo}			    {        return TIPO;          }
 {numerico}		    {        return NUMERICO;      }
 {cadena}			{        return CADENA;        }
@@ -105,33 +103,35 @@ string          (\"[a-za-Z0-9]+\")
 {si}                {        return SI;            }
 {entonces}          {        return ENTONCES;      }
 {sino}              {        return SINO;          }
-{finsi}             {        return FINSI;         }    	
-{evaluar}	    	{        return EVALUAR;       } 
-{caso}	    	    {        return CASO;          } 
-{otro}	    	    {        return OTRO;          } 
-{finevaluar}  	    {        return FINEVALUAR;    } 
-{mientras}    	    {        return MIENTRAS;      } 
-{hacer}             {        return HACER;         } 
-{finmientras}       {        return FINMIENTRAS;   }  	
-{iterar}	        {        return ITERAR;        }             	
-{finiterar}	        {        return FINITERAR;     }   
-{imprimir}		    {        return IMPRIMIR;      } 
-{bitacora}		    {        return BITACORA;      } 
-{leer}			    {        return LEER;          } 
+{finsi}             {        return FINSI;         }  	
+{evaluar}	    	{        return EVALUAR;       }
+{caso}	    	    {        return CASO;          }
+{otro}	    	    {        return OTRO;          }
+{finevaluar}  	    {        return FINEVALUAR;    }
+{mientras}    	    {        return MIENTRAS;      }
+{hacer}             {        return HACER;         }
+{finmientras}       {        return FINMIENTRAS;   }
+{iterar}	        {        return ITERAR;        }       	
+{finiterar}	        {        return FINITERAR;     }
+{imprimir}		    {        return IMPRIMIR;      }
+{bitacora}		    {        return BITACORA;      }
+{leer}			    {        return LEER;          }
 {cargar_vector}	    {        return CARGARVEC;     }
 {AND}               {        return AND;           }
-{OR}                {        return OR;            }  
+{OR}                {        return OR;            }
 "+"                 {        return SUMA;          }
 "-"                 {        return RES;           }
 "*"                 {        return MULT;          }
 "/"                 {        return DIV;           }
+"^"                 {        return POT;           }
 "("                 {        return PARIZQ;        }
 ")"                 {        return PARDER;        }
 "=="                {        return IGUAL;         }
+"!"                 {        return NOT;           }
 "!="                {        return DISTINTO;      }
-"<"                 {        return MENOR;         } 
-">"                 {        return MAYOR;         } 
-"<="                {        return MENOROIGUAL;   } 
+"<"                 {        return MENOR;         }
+">"                 {        return MAYOR;         }
+"<="                {        return MENOROIGUAL;   }
 ">="                {        return MAYOROIGUAL;   }
 ":="                {        return ASIG;          }
 "["                 {        return CORIZQ;        }
@@ -143,6 +143,5 @@ string          (\"[a-za-Z0-9]+\")
                     }
 [ \t]               ;
 .                   {   return lexer_error(line_number, yytext);  }
-
 %%
 /*CODIGO DE USUARIO*/

@@ -33,7 +33,7 @@
 %token <string> STRING NOMPROG NOMCONST NOMVAR
 %token INICIO  FINPROG CONST  FINCONST VARIABLE FINVAR TIPO NUMERICO CADENA SENTENCIAS 
 %token FINSENT SI ENTONCES SINO FINSI EVALUAR CASO OTRO FINEVALUAR  MIENTRAS HACER FINMIENTRAS 
-%token ITERAR FINITERAR IMPRIMIR BITACORA LEER CARGARVEC AND OR SUMA RES MULT DIV PARIZQ PARDER 
+%token ITERAR FINITERAR IMPRIMIR BITACORA LEER CARGARVEC AND OR SUMA RES MULT DIV POT PARIZQ PARDER 
 %token IGUAL DISTINTO MENOR MAYOR MENOROIGUAL MAYOROIGUAL ASIG CORIZQ CORDER PUNYCOM NL
 
 %type <real> expresion
@@ -61,7 +61,7 @@ linea: expresion NL { printf("El resultado es: %0.2f\n", $1); }
 	 | error NL				{}
 
 expresion: NUM                      { printf("El numero: %0.2f\n", $1); }
-         | ID                       { $$ = getVal($1); printf("El id: %s\n",$1); }
+         | STRING                       { $$ = getVal($1); printf("El id: %s\n",$1); }
          | MEN expresion            { $$ = -$2; printf("(-)\n");	}
          | expresion MAS expresion  { $$ = $1 + $3; printf("+\n");	}
          | expresion MEN expresion  { $$ = $1 - $3; printf("-\n"); }
