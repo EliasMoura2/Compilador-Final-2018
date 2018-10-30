@@ -35,6 +35,7 @@ finsentencias   [fF][iI][nN][sS][eE][nN][tT][eE][nN][cC][iI][aA][sS]
 /*Estructura condicional*/
 si		    	[sS][iI]
 entonces        [eE][nN][tT][oO][nN][cC][eE][sS]
+hacer           [hH][aA][cC][eE][rR]
 sino            [sS][iI][nN][oO]
 finsi	    	[fF][iI][nN][sS][iI]
 /*Estructura condicional switch*/
@@ -59,12 +60,12 @@ leer			[lL][eE][eE][rR]
 cargar_vector	[cC][aA][rR][gG][aA][rR]_[vV][eE][cC][tT][oO][rR]
 
 /* and y or*/
-and			[aA][nN][dD]
-or			[oO][rR]
+and			    [aA][nN][dD]
+or			    [oO][rR]
 /*numero entero o real con dos decimales*/
 numero          (([+-][0-9]+\.[0-9]{2})|([0-9]+\.[0-9]{2})|([+-][0-9]+)|([0-9]+))
 /*cadena*/
-string          (\"[a-za-Z0-9]+\")
+string          (\"[^ \n\t]+\")
     /*CONDICIONES DE ARRANQUE*/
 
     /*DIRECTIVAS*/    
@@ -72,34 +73,26 @@ string          (\"[a-za-Z0-9]+\")
 
 %%
  /*REGLAS*/
-
-!!%					{ BEGIN(COMENTARIO); }
-<COMENTARIO>%		{ BEGIN(INITIAL); }
-<COMENTARIO>.		/* ignora comentarios */
-<COMENTARIO><<EOF>>	{ fprintf(stderr, "Error: comentario sin cerrar"); yyterminate(); }
-
-!!.*			/* ignora comentarios */
-
 {numero}            {
-                        yylval.numero = atof(yytext);
+                        yylval = atof(yytext);
                         return NUM;
                     }
 {string}            {
-				        yylval.string = strdup(yytext);
+				        yylval.id = strdup(yytext);
 				        return STRING;
                     }
 {inicio}            {       return INICIO;         }
 {nom_programa}      {       return NOMPROG;        }
-{finprograma}       {       return FINPROG         }
+{finprograma}       {       return FINPROG;        }
 {constantes}        {       return CONST;          }
 {nom_const}         {
-				        yylval.string = strdup(yytext);
+				        yylval.id = strdup(yytext);
 				        return NOMCOST;
                     }
 {finconstantes}     {       return FINCONST;       }
 {variables}         {       return VARIABLE;       }
 {nom_var}           {
-				        yylval.string = strdup(yytext);
+				        yylval.id = strdup(yytext);
 				        return NOMVAR;
                     }
 {finvariables}      {        return FINVAR;        }
@@ -125,8 +118,8 @@ string          (\"[a-za-Z0-9]+\")
 {bitacora}		    {        return BITACORA;      }
 {leer}			    {        return LEER;          }
 {cargar_vector}	    {        return CARGARVEC;     }
-{AND}               {        return AND;           }
-{OR}                {        return OR;            }
+{and}               {        return AND;           }
+{or}                {        return OR;            }
 "+"                 {        return SUMA;          }
 "-"                 {        return RES;           }
 "*"                 {        return MULT;          }
@@ -145,8 +138,6 @@ string          (\"[a-za-Z0-9]+\")
 "["                 {        return CORIZQ;        }
 "]"                 {        return CORDER;        }
 ";"                 {        return PUNYCOM;       }
-"{"                 {        return LLAVEAB;       }
-"}"                 {        return LLAVECE;       }
 \n                  {
                         st_newline();
                         return NL;

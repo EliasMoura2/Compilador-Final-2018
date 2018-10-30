@@ -1,6 +1,6 @@
 %{
 	#include <stdio.h>
-    #include "../lib/cya.h"
+   //#include "../lib/cya.h"
     #include "fn.h"
     #include <string.h>
 	#include <math.h>
@@ -26,15 +26,15 @@
     /*DECLARACIONES DE YACC/BISON*/
 %union {
 	double  real;
-    string    *string;
+    char    *cadena;
 }
     /*TERMINALES*/
 %token <real> NUM
-%token <string> STRING NOMPROG NOMCONST NOMVAR
-%token INICIO  FINPROG CONST  FINCONST VARIABLE FINVAR TIPO NUMERICO CADENA SENTENCIAS FINSENT 
-%token SI ENTONCES SINO FINSI EVALUAR CASO OTRO FINEVALUAR  MIENTRAS HACER FINMIENTRAS ITERAR FINITERAR 
-%token IMPRIMIR BITACORA LEER CARGARVEC AND OR SUMA RES MULT DIV POT PARIZQ PARDER IGUAL NOT DISTINTO 
-%token MENOR MAYOR MENOROIGUAL MAYOROIGUAL ASIG CORIZQ CORDER PUNYCOM NL LLAVEAB LLAVECE
+%token <id> STRING NOMPROG NOMCONST NOMVAR
+%token INICIO  FINPROG CONST  FINCONST VARIABLE FINVAR TIPO NUMERICO CADENA SENTENCIAS 
+%token FINSENT SI ENTONCES SINO FINSI EVALUAR CASO OTRO FINEVALUAR  MIENTRAS HACER FINMIENTRAS 
+%token ITERAR FINITERAR IMPRIMIR BITACORA LEER CARGARVEC AND OR SUMA RES MULT DIV POT PARIZQ PARDER 
+%token IGUAL NOT DISTINTO MENOR MAYOR MENOROIGUAL MAYOROIGUAL ASIG CORIZQ CORDER PUNYCOM NL
 
 %type <real> expresion
 
@@ -59,10 +59,6 @@ lineas: linea lineas
 linea: expresion NL { printf("El resultado es: %0.2f\n", $1); }
  	 | expresion error NL	{}
 	 | error NL				{}
-	 | inicio
-	 | si
-	 | while
-	 ;
 
 expresion: NUM                      { printf("El numero: %0.2f\n", $1); }
          | STRING                   { $$ = getVal($1); printf("El id: %s\n",$1); }
@@ -83,37 +79,9 @@ expresion: NUM                      { printf("El numero: %0.2f\n", $1); }
                                         printf("/\n");
 		 							}
          | expresion POT expresion  { $$ = pow($1,$3); printf("^\n"); }
-         | LPAR expresion RPAR      { $$ = $2; printf("()n"); }
+         | PARIZQ expresion PARDER      { $$ = $2; printf("()n"); }
          | STRING ASIG expresion	    { $$ = setVal($1, $3); printf("la variable %s\n",$1); }
          ;
-
-sigma           :       INICIO NOMPROG T_DOSPUNTOS T_LLAVEAB/*llave abierta*/ T_CUERPO T_LLAVECE/*llave cerrada*/
-T_CUERPO        :       i_const FINCONST i_variable FINVAR SENTENCIAS FINSENT
-i_const         :       CONST TIPO NOMCONST
-i_variable      :       VARIABLE TIPO NOMVAR
-SENTENCIAS      :       lineas
-lineas          :       linea lineas
-linea           :       expresion           
-                |       si //if
-                |       mientras //while
-
-si              :       SI expresion ENTONCES T_DOSPUNTOS lineas
-sino            :       SINO ENTONCES T_DOSPUNTOS lineas
-mientras        :       T_MIENTRAS expresion T_DOSPUNTOS
-entonces        :       T_LLAVEAB lineas T_LLAVECE
-expresion       :       expresion SUMA expresion
-                |       expresion RES expresion
-                |       expresion DIV expresion
-                |       expresion MULT expresion
-                |       expresion MENOR expresion
-                |       expresion MENOROIGUAL expresion
-                |       expresion MAYOR expresion
-                |       expresion MAYOROIGUAL expresion
-                |       expresion IGUAL expresion
-                |       expresionDISTINTO expresion
-                |       expresion T_AND expresion
-                |       expresion T_OR expresion
-                |       PARIZQ expresion PARDER
 
 %%
  /*CODIGO DE USUARIO*/
@@ -121,6 +89,7 @@ void yyerror(char *s)
 {
 	printf("ERROR SINTACTICO en la linea %d\n", numLinea);
 }
+
 
 double getVal(char *id)
 {

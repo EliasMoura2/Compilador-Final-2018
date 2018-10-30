@@ -1,13 +1,22 @@
-all: unclean clean
+.PHONY: tests all build flex bison clean
 
-unclean: flex bison
-	gcc y.tab.c lex.yy.c -o ejecutable -lm
+all: build clean
+
+build: flex bison
+	gcc -o bin/calc \
+	 	lib/ast.c \
+	 	lib/st.c \
+	 	lib/array.c \
+	 	src/fn.c \
+	 	src/y.tab.c \
+	 	src/lex.yy.c \
+	 	src/main.c 
 
 flex:
-	flex scanner.l
+	flex -o src/lex.yy.c src/scanner.l
 
 bison:
-	bison -y -d parser.y
+	bison -v -y -d src/parser.y -o src/y.tab.c
 
 clean:
-	rm lex.yy.c y.tab.c y.tab.h
+	rm src/lex.yy.c src/y.tab.c src/y.tab.h src/y.output
